@@ -1,0 +1,50 @@
+import com.amazonaws.auth.profile.ProfileCredentialsProvider
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.amazonaws:aws-java-sdk-core:1.11.5'
+    }
+}
+
+plugins {
+    id 'java'
+    id 'maven-publish'
+}
+
+ext {
+    awsCredentials = new ProfileCredentialsProvider().credentials
+}
+
+group = 'com.jacobaseverson.player'
+version = '0.0.1'
+
+repositories {
+    mavenLocal()
+    jcenter()
+}
+
+dependencies {
+    compile 'com.fasterxml.jackson.core:jackson-annotations:2.8.4'
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+
+    repositories {
+        maven {
+            url "s3://${repoBucketName}/releases"
+            credentials(AwsCredentials) {
+                accessKey awsCredentials.AWSAccessKeyId
+                secretKey awsCredentials.AWSSecretKey
+            }
+        }
+    }
+}
+

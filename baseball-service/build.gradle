@@ -1,0 +1,46 @@
+import com.amazonaws.auth.profile.ProfileCredentialsProvider
+
+buildscript {
+    repositories {
+        mavenLocal()
+        jcenter()
+    }
+    dependencies {
+        classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.4.2.RELEASE'
+        classpath 'com.amazonaws:aws-java-sdk-core:1.11.5'
+    }
+}
+
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '1.4.2.RELEASE'
+}
+
+jar {
+    baseName = 'baseball-service'
+    version =  '0.0.1'
+}
+
+ext {
+    awsCredentials = new ProfileCredentialsProvider().credentials
+}
+
+repositories {
+    maven {
+        url "s3://${repoBucketName}/releases"
+        credentials(AwsCredentials) {
+            accessKey awsCredentials.AWSAccessKeyId
+            secretKey awsCredentials.AWSSecretKey
+        }
+    }
+    mavenLocal()
+    jcenter()
+}
+
+dependencies {
+    compile('org.springframework.boot:spring-boot-starter-web') {
+        exclude module: "spring-boot-starter-tomcat"
+    }
+    compile('org.springframework.boot:spring-boot-starter-jetty')
+    compile('com.jacobaseverson.player:player-api:0.0.1')
+}

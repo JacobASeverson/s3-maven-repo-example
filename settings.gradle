@@ -1,0 +1,6 @@
+include 'artifact-repo',
+        'baseball-service',
+        'player-api'
+
+rootProject.name = 's3-maven-repo-example'
+
